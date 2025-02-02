@@ -21,7 +21,7 @@
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<!-- Allow to be packaged on Pack -->
 		<IsPackable>true</IsPackable>
-		<PackageVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd"))</PackageVersion>
+		<PackageVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))</PackageVersion>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 
 		<PackageId>Paulov.Bepinex.Framework</PackageId>
