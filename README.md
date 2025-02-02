@@ -1,12 +1,6 @@
-﻿<div align="center">
-<h3 align="center">Paulov's Bepinex Framework</h3>
+﻿# Paulov's Bepinex Framework
 
-  <p align="center">
-	A small library that can be used to quicky create BepInEx 5 plugins for Unity
-	<br />
-  </p>
-
-</div>
+** A small library that can be used to quicky create BepInEx 5 plugins for Unity **
 
 ## About The Project
 This project is designed to allow developers to quickly create BepInEx 5 plugins for Unity games. It provides a simple way to create a plugin that can be easily loaded into the game.
