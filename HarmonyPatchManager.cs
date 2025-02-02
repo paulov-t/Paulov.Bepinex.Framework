@@ -24,6 +24,11 @@ public class HarmonyPatchManager
     public void EnablePatches()
     {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        if (assemblies.Length == 0)
+        {
+            logger.LogError("No assemblies found.");
+            return;
+        }
         foreach (var assembly in assemblies)
         {
             if (!assembly.Location.Contains("BepInEx", StringComparison.OrdinalIgnoreCase))
