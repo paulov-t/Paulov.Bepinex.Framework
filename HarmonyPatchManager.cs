@@ -3,8 +3,10 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using UnityEngine.Video;
 
 namespace Paulov.Bepinex.Framework;
 
@@ -21,23 +23,35 @@ public class HarmonyPatchManager
 
     public void EnablePatches()
     {
-        foreach (var patch in this.GetType().Assembly.GetTypes()
-           .Where(x => x.GetInterface(nameof(IPaulovHarmonyPatch)) != null)
-           .OrderBy(t => t.Name).ToArray())
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        foreach (var assembly in assemblies)
         {
-            try
-            {
-                var harmony = new Harmony(patch.Name);
-                var obj = Activator.CreateInstance(patch) as IPaulovHarmonyPatch;
-                if (obj == null || obj.GetMethodToPatch() == null)
-                    continue;
+            if (!assembly.Location.Contains("BepInEx", StringComparison.OrdinalIgnoreCase))
+                continue;
 
-                harmony.Patch(obj.GetMethodToPatch(), obj.GetPrefixMethod(), obj.GetPostfixMethod(), obj.GetTranspilerMethod(), obj.GetFinalizerMethod(), obj.GetILManipulatorMethod());
-                harmonyList.Add(harmony);
-            }
-            catch (Exception e)
+            logger.LogDebug($"{nameof(HarmonyPatchManager)} Assembly: {assembly.FullName}");
+        }
+
+        foreach (var assembly in assemblies)
+        {
+            foreach (var patch in assembly.GetTypes()
+               .Where(x => x.GetInterface(nameof(IPaulovHarmonyPatch)) != null)
+               .OrderBy(t => t.Name).ToArray())
             {
-                logger.LogError(e);
+                try
+                {
+                    var harmony = new Harmony(patch.Name);
+                    var obj = Activator.CreateInstance(patch) as IPaulovHarmonyPatch;
+                    if (obj == null || obj.GetMethodToPatch() == null)
+                        continue;
+
+                    harmony.Patch(obj.GetMethodToPatch(), obj.GetPrefixMethod(), obj.GetPostfixMethod(), obj.GetTranspilerMethod(), obj.GetFinalizerMethod(), obj.GetILManipulatorMethod());
+                    harmonyList.Add(harmony);
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e);
+                }
             }
         }
     }
