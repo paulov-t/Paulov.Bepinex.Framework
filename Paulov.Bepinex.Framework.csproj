@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Paulov.Bepinex.Framework</AssemblyName>
+    <Product>Paulov.Bepinex.Framework</Product>
+    <Version>1.0.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json;
+      https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+    <RootNamespace>Paulov.Bepinex.Framework</RootNamespace>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<!-- Nuget packaging -->
+		<!-- Do NOT package on Build, only package on Pack -->
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<!-- Allow to be packaged on Pack -->
+		<IsPackable>true</IsPackable>
+		<PackageVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd"))</PackageVersion>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<PackageId>Paulov.Bepinex.Framework</PackageId>
+		<Title>Paulov.Bepinex.Framework</Title>
+		<Authors>Paulov-t</Authors>
+		<Company>Paulov-t</Company>
+		<Copyright>Paulov-t 2025</Copyright>
+		<Description>A package designed for Bepinex patching Unity games quickly</Description>
+		<PackageProjectUrl>https://github.com/paulov-t/Paulov.Bepinex.Framework</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/paulov-t/Paulov.Bepinex.Framework</RepositoryUrl>
+		<PackageTags>paulov-t; unity; bepinex; tarkov;</PackageTags>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Core" Version="5.*" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	  <!-- Paulov: Note. This isn't the version Tarkov is using but it is the latest available on Nuget. -->
+    <PackageReference Include="UnityEngine.Modules" Version="2021.3.33" IncludeAssets="compile" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+  </ItemGroup>
+</Project>
