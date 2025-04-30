@@ -46,8 +46,7 @@ public class HarmonyPatchManager
                 try
                 {
                     var harmony = new Harmony(patch.Name);
-                    var obj = Activator.CreateInstance(patch) as IPaulovHarmonyPatch;
-                    if (obj == null || obj.GetMethodToPatch() == null)
+                    if (Activator.CreateInstance(patch) is not IPaulovHarmonyPatch obj || obj.GetMethodToPatch() == null)
                         continue;
 
                     harmony.Patch(obj.GetMethodToPatch(), obj.GetPrefixMethod(), obj.GetPostfixMethod(), obj.GetTranspilerMethod(), obj.GetFinalizerMethod(), obj.GetILManipulatorMethod());
@@ -59,12 +58,24 @@ public class HarmonyPatchManager
                 }
             }
         }
+        
+        logger.LogDebug($"{nameof(HarmonyPatchManager)}: {harmonyList.Count} harmony patches applied");
     }
 
     public void DisablePatches()
     {
-        foreach (var harmony in harmonyList)
-            harmony.UnpatchSelf();
+        foreach (Harmony harmony in harmonyList)
+        {
+            try
+            {
+                harmony.UnpatchSelf();
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Failed to unpatch {harmony.Id}.\n{e}");
+            }
+        }
+        harmonyList.Clear();
     }
 
     public static CodeInstruction ParseCode(Code code)
@@ -100,12 +111,9 @@ public class HarmonyPatchManager
 
     private static List<Label> GetLabelList(Code code)
     {
-        if (code.GetLabel() == null)
-        {
-            return new List<Label>();
-        }
-
-        return new List<Label>() { (Label)code.GetLabel() };
+        List<Label> labels = [];
+        if (code.GetLabel() is { } label) labels.Add(label);
+        return labels;
     }
 
 }
