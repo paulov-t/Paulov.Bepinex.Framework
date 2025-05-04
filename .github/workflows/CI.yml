@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Build-SIT:
+  Build:
 
     strategy:
       matrix:
@@ -26,8 +26,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      SolutionName: Paulov.Tarkov.Minimal
-      ProjectClient: Paulov.Tarkov.Minimal.csproj
+      SolutionName: Paulov.Bepinex.Framework
+      ProjectClient: Paulov.Bepinex.Framework.csproj
 
     steps:
       - name: Checkout
