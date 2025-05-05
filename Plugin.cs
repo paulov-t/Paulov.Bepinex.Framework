@@ -11,9 +11,5 @@ public class Plugin : BaseUnityPlugin
     private void Awake()
     {
         Logger = base.Logger;
-
-        // Create HarmonyPatchManager and Enable the Patches
-        var hpm = new HarmonyPatchManager("Paulov's Main Harmony Manager");
-        hpm.EnablePatches();
     }
 }
