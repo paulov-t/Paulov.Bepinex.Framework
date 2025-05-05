@@ -1,0 +1,91 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: Create Release and Publish to Nuget
+on:
+  workflow_dispatch: # Allow running the workflow manually from the GitHub UI
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  NuGetDirectory: ${{ github.workspace }}/nuget
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+
+    env:
+      SolutionName: Paulov.Bepinex.Framework
+      ProjectClient: Paulov.Bepinex.Framework.csproj
+      DllName: Paulov.Bepinex.Framework
+      
+    steps:
+    - uses: actions/checkout@v4
+
+    # install .net
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    # Restore all projects
+    - name: Build and Publish
+      run: dotnet restore
+
+    # Build the project
+    - name: Build
+      run: |
+        dotnet build ${{ env.ProjectClient }} -c Release -o ${{ env.DllName }}
+
+    - name: Get version from DLL
+      id: extract-version
+      shell: pwsh
+      run: |
+        $v = $([System.DateTime]::Now.ToString("yyyy.MM.dd.HHmm"))
+        echo $v
+        echo VERSION=$v >> $env:GITHUB_OUTPUT
+
+    - name: Display Version in Logs
+      run: echo "The extracted version is ${{ steps.extract-version.outputs.VERSION }}"
+
+    - name: Zip remaining files
+      run: |
+          Compress-Archive -Path "${{ env.DllName }}\${{ env.DllName }}.dll" -DestinationPath ${{ env.DllName }}.zip
+ 
+    # Create release as draft from the compressed file
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+          generate_release_notes: true
+          files: ${{ env.DllName }}.zip
+          tag_name: Paulov.Bepinex.Framework-${{ steps.extract-version.outputs.VERSION }}
+  
+  create_nuget:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+        
+    # install .net
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    # Create the NuGet package in the folder from the environment variable NuGetDirectory
+    - name: Nuget Pack
+      run: |
+        foreach($file in (Get-ChildItem -Recurse -Include *.csproj)) {
+          dotnet pack $file --configuration Release --output ${{ env.NuGetDirectory }} /p:EnableWindowsTargeting=true
+        }
+  
+    # Publish all NuGet packages to NuGet.org
+    # Use --skip-duplicate to prevent errors if a package with the same version already exists.
+    # If you retry a failed workflow, already published packages will be skipped without error.
+    - name: Publish NuGet package
+      run: |
+        foreach($file in (Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg)) {
+            dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        }
