@@ -1,6 +1,12 @@
 ﻿# Paulov's Bepinex Framework
 
-** A small library that can be used to quicky create BepInEx 5 plugins for Unity **
+<div align="center">
+    
+<strong>A small library that can be used to quicky create BepInEx 5 plugins for Unity</strong>
+
+  ![NuGet Version](https://img.shields.io/nuget/v/Paulov.Bepinex.Framework?style=for-the-badge)
+
+</div>
 
 ## About The Project
 This project is designed to allow developers to quickly create BepInEx 5 plugins for Unity games. It provides a simple way to create a plugin that can be easily loaded into the game.
