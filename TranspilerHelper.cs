@@ -10,8 +10,8 @@ namespace Paulov.Bepinex.Framework;
 public static class TranspilerHelper
 {
     private static readonly ImmutableArray<OpCode> FieldCodes = [OpCodes.Ldfld, OpCodes.Stfld];
-    private static readonly ImmutableArray<OpCode> _methodCodes = [OpCodes.Call, OpCodes.Callvirt];
-    private static readonly ImmutableArray<OpCode> _branchCodes =
+    private static readonly ImmutableArray<OpCode> MethodCodes = [OpCodes.Call, OpCodes.Callvirt];
+    private static readonly ImmutableArray<OpCode> BranchCodes =
         [OpCodes.Br, OpCodes.Brfalse, OpCodes.Brtrue, OpCodes.Brtrue_S, OpCodes.Brfalse_S, OpCodes.Br_S];
     
     public static CodeInstruction ParseCode(Code code)
@@ -30,7 +30,7 @@ public static class TranspilerHelper
         {
             operand = AccessTools.Field(code.CallerType, code.OperandTarget as string);
         }
-        else if (code.Parameters.Length > 0 && _methodCodes.Contains(code.OpCode))
+        else if (code.Parameters.Length > 0 && MethodCodes.Contains(code.OpCode))
         {
             operand = AccessTools.Method(code.CallerType, code.OperandTarget as string, code.Parameters);
         }
@@ -38,7 +38,7 @@ public static class TranspilerHelper
         {
             operand = code.CallerType;
         }
-        else if (_branchCodes.Contains(code.OpCode))
+        else if (BranchCodes.Contains(code.OpCode))
         {
             operand = code.OperandTarget;
         }
