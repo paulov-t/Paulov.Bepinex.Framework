@@ -2,11 +2,6 @@
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using UnityEngine.Video;
 
 namespace Paulov.Bepinex.Framework;
 
@@ -24,6 +19,12 @@ public class HarmonyPatchManager
 
     public void EnablePatches()
     {
+        if (_patchProvider == null)
+        {
+            logger.LogError($"{nameof(HarmonyPatchManager)}: No patch provider set. Patches will not be applied.");
+            return;
+        }
+
         foreach (IPaulovHarmonyPatch patch in _patchProvider.GetPatches())
         {
             try
@@ -38,7 +39,7 @@ public class HarmonyPatchManager
                     obj.GetPrefixMethod(),
                     obj.GetPostfixMethod(),
                     obj.GetTranspilerMethod(),
-                    obj.GetFinalizerMethod(), 
+                    obj.GetFinalizerMethod(),
                     obj.GetILManipulatorMethod()
                 );
                 harmonyList.Add(harmony);
@@ -48,7 +49,7 @@ public class HarmonyPatchManager
                 logger.LogError(e);
             }
         }
-        
+
         logger.LogDebug($"{nameof(HarmonyPatchManager)}: {harmonyList.Count} harmony patches applied");
     }
 
@@ -68,6 +69,6 @@ public class HarmonyPatchManager
         harmonyList.Clear();
     }
 
-    
+
 
 }
