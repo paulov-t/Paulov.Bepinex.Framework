@@ -29,7 +29,7 @@ public static class TranspilerHelper
         {
             operand = AccessTools.Field(code.CallerType, code.OperandTarget as string);
         }
-        else if (code.Parameters.Length > 0 && MethodCodes.Contains(code.OpCode))
+        else if (code.Parameters.Length > 0 || MethodCodes.Contains(code.OpCode))
         {
             operand = AccessTools.Method(code.CallerType, code.OperandTarget as string, code.Parameters);
         }
@@ -44,7 +44,7 @@ public static class TranspilerHelper
         else
         {
             //OpCode has operand but is of an unsupported type
-            throw new ArgumentException($"Code with OpCode {nameof(code.OpCode)} is not supported.");
+            throw new ArgumentException($"Code with OpCode {code.OpCode} is not supported.");
         }
 
         parsedInstruction.operand = operand;
