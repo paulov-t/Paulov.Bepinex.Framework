@@ -1,28 +1,27 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection.Emit;
-using HarmonyLib;
 
 namespace Paulov.Bepinex.Framework;
 
 public static class TranspilerHelper
 {
-    private static readonly ImmutableArray<OpCode> FieldCodes = [OpCodes.Ldfld, OpCodes.Stfld];
-    private static readonly ImmutableArray<OpCode> MethodCodes = [OpCodes.Call, OpCodes.Callvirt];
-    private static readonly ImmutableArray<OpCode> BranchCodes =
+    private static readonly IEnumerable<OpCode> FieldCodes = [OpCodes.Ldfld, OpCodes.Stfld];
+    private static readonly IEnumerable<OpCode> MethodCodes = [OpCodes.Call, OpCodes.Callvirt];
+    private static readonly IEnumerable<OpCode> BranchCodes =
         [OpCodes.Br, OpCodes.Brfalse, OpCodes.Brtrue, OpCodes.Brtrue_S, OpCodes.Brfalse_S, OpCodes.Br_S];
-    
+
     public static CodeInstruction ParseCode(Code code)
     {
         CodeInstruction parsedInstruction = new CodeInstruction(code.OpCode)
         {
             labels = code.Label.HasValue ? [code.Label.Value] : []
         };
-        
+
         object operand;
-        
+
         if (!code.HasOperand) return parsedInstruction;
 
         //There is likely a better way to do this, but I can't think of one right now
@@ -47,7 +46,7 @@ public static class TranspilerHelper
             //OpCode has operand but is of an unsupported type
             throw new ArgumentException($"Code with OpCode {nameof(code.OpCode)} is not supported.");
         }
-        
+
         parsedInstruction.operand = operand;
         return parsedInstruction;
     }
