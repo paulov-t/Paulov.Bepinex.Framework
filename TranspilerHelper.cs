@@ -29,7 +29,7 @@ public static class TranspilerHelper
         {
             operand = AccessTools.Field(code.CallerType, code.OperandTarget as string);
         }
-        else if (code.Parameters.Length > 0 || MethodCodes.Contains(code.OpCode))
+        else if (code.Parameters?.Length > 0 || MethodCodes.Contains(code.OpCode))
         {
             operand = AccessTools.Method(code.CallerType, code.OperandTarget as string, code.Parameters);
         }
