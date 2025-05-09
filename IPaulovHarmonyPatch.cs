@@ -10,7 +10,7 @@ namespace Paulov.Bepinex.Framework
 {
     public interface IPaulovHarmonyPatch
     {
-        MethodBase GetMethodToPatch();
+        IEnumerable<MethodBase> GetMethodsToPatch();
         HarmonyMethod GetPrefixMethod();
         HarmonyMethod GetPostfixMethod();
         HarmonyMethod GetTranspilerMethod();
