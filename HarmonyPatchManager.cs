@@ -1,74 +1,62 @@
 ﻿using BepInEx.Logging;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Paulov.Bepinex.Framework;
 
 public class HarmonyPatchManager
 {
-    private readonly ManualLogSource logger;
+    private readonly ManualLogSource _logger;
     private readonly IPatchProvider _patchProvider;
-    private List<Harmony> harmonyList = [];
+    private readonly Harmony _harmony = new("Paulov.Bepinex.Framework");
 
-    public HarmonyPatchManager(string managerName, IPatchProvider patchProvider = null)
+    public HarmonyPatchManager(string managerName, IPatchProvider patchProvider)
     {
-        logger = Logger.CreateLogSource(managerName ?? GetType().Name);
+        _logger = Logger.CreateLogSource(managerName ?? GetType().Name);
         _patchProvider = patchProvider;
     }
 
-    public void EnablePatches()
+    public int EnableAll()
     {
-        if (_patchProvider == null)
-        {
-            logger.LogError($"{nameof(HarmonyPatchManager)}: No patch provider set. Patches will not be applied.");
-            return;
-        }
+        if (_patchProvider != null) return _patchProvider.GetPatches().Sum(ApplyPatches);
+        
+        _logger.LogError($"{nameof(HarmonyPatchManager)}: No patch provider set. Patches will not be applied.");
+        return 0;
 
-        foreach (IPaulovHarmonyPatch patch in _patchProvider.GetPatches())
+    }
+
+    public int DisableAll()
+    {
+        int patchesRemoved = 0;
+        foreach (MethodBase patch in _harmony.GetPatchedMethods())
         {
             try
             {
-                Type patchType = patch.GetType();
-                Harmony harmony = new Harmony(patchType.Name);
-                if (Activator.CreateInstance(patchType) is not IPaulovHarmonyPatch obj || obj.GetMethodToPatch() == null)
-                    continue;
-
-                _ = harmony.Patch(
-                    obj.GetMethodToPatch(),
-                    obj.GetPrefixMethod(),
-                    obj.GetPostfixMethod(),
-                    obj.GetTranspilerMethod(),
-                    obj.GetFinalizerMethod(),
-                    obj.GetILManipulatorMethod()
-                );
-                harmonyList.Add(harmony);
+                _harmony.Unpatch(patch, HarmonyPatchType.All);
+                patchesRemoved++;
             }
             catch (Exception e)
             {
-                logger.LogError(e);
+                _logger.LogError($"Failed to unpatch {patch.Name}: {e}");
             }
         }
-
-        logger.LogDebug($"{nameof(HarmonyPatchManager)}: {harmonyList.Count} harmony patches applied");
+        
+        return patchesRemoved;
     }
 
-    public void DisablePatches()
+    private int ApplyPatches(IPaulovHarmonyPatch patch)
     {
-        foreach (Harmony harmony in harmonyList)
+        int patchesApplied = 0;
+
+        foreach (MethodBase method in patch.GetMethodsToPatch())
         {
-            try
-            {
-                harmony.UnpatchSelf();
-            }
-            catch (Exception e)
-            {
-                logger.LogError($"Failed to unpatch {harmony.Id}.\n{e}");
-            }
+            _ = _harmony.Patch(method, patch.GetPrefixMethod(), patch.GetPostfixMethod(),
+                patch.GetTranspilerMethod(), patch.GetFinalizerMethod(), patch.GetILManipulatorMethod());
+            patchesApplied++;
         }
-        harmonyList.Clear();
+        
+        return patchesApplied;
     }
-
-
-
 }

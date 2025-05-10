@@ -1,41 +1,25 @@
 ﻿using HarmonyLib;
-using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace Paulov.Bepinex.Framework.Patches
 {
-    public class NullPaulovHarmonyPatch : IPaulovHarmonyPatch
+    public abstract class NullPaulovHarmonyPatch : IPaulovHarmonyPatch
     {
-        public virtual HarmonyMethod GetFinalizerMethod()
-        {
-            return null;
-        }
+        public abstract IEnumerable<MethodBase> GetMethodsToPatch();
+        
+        #region GetXMethod
 
-        public virtual HarmonyMethod GetILManipulatorMethod()
-        {
-            return null;
-        }
+        public virtual HarmonyMethod GetFinalizerMethod() => null;
 
-        public virtual MethodBase GetMethodToPatch()
-        {
-            return null;
-        }
+        public virtual HarmonyMethod GetILManipulatorMethod() => null;
 
-        public virtual HarmonyMethod GetPostfixMethod()
-        {
-            return null;
-        }
+        public virtual HarmonyMethod GetPostfixMethod() => null;
 
-        public virtual HarmonyMethod GetPrefixMethod()
-        {
-            return null;
-        }
+        public virtual HarmonyMethod GetPrefixMethod() => null;
 
-        public virtual HarmonyMethod GetTranspilerMethod()
-        {
-            return null;
-        }
+        public virtual HarmonyMethod GetTranspilerMethod() => null;
+
+        #endregion
     }
 }
