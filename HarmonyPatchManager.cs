@@ -12,10 +12,10 @@ public class HarmonyPatchManager
     private readonly IPatchProvider _patchProvider;
     private readonly Harmony _harmony = new("Paulov.Bepinex.Framework");
 
-    public HarmonyPatchManager(string managerName, IPatchProvider patchProvider)
+    public HarmonyPatchManager(string managerName, IPatchProvider patchProvider = null)
     {
         _logger = Logger.CreateLogSource(managerName ?? GetType().Name);
-        _patchProvider = patchProvider;
+        _patchProvider = patchProvider ?? new ReflectionPatchProvider();
     }
 
     public int EnableAll()
