@@ -39,9 +39,7 @@ namespace Paulov.Bepinex.Framework.Patches
         {
             if (GetType() == typeof(NullPaulovHarmonyPatch))
                 throw new InvalidOperationException("This method should only be called from a derived type.");
-            Plugin.Logger.LogDebug($"Looking for '{methodName}' in {GetType().Name}");
             MethodInfo method = GetType().GetMethod(methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-            Plugin.Logger.LogDebug($"Found '{method?.Name}' in {GetType().Name}");
             return method == null ? null : new HarmonyMethod(method);
         }
 
