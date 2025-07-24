@@ -1,5 +1,5 @@
-﻿using System;
-using HarmonyLib;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -48,7 +48,7 @@ namespace Paulov.Bepinex.Framework.Patches
             const string prefixToTrim = "Get";
             if (!methodName.StartsWith(prefixToTrim, StringComparison.InvariantCultureIgnoreCase))
                 throw new InvalidOperationException("Method name must start with 'Get'.");
-            return methodName[prefixToTrim.Length..];
+            return methodName.Replace("Get", "");
         }
     }
 }
