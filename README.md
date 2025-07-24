@@ -1,18 +1,15 @@
 ﻿# Paulov's Bepinex Framework
 
-<div align="center">
-    
-<strong>A small library that can be used to quicky create BepInEx 5 plugins for Unity</strong>
+A small library that can be used to quicky create BepInEx 5 plugins for Unity
 
-  ![NuGet Version](https://img.shields.io/nuget/v/Paulov.Bepinex.Framework?style=for-the-badge)
-
-</div>
+[![Nuget][nuget-shield]][nuget-url]
+[![Contributors][contributors-shield]][contributors-url]
 
 ## About The Project
 This project is designed to allow developers to quickly create BepInEx 5 plugins for Unity games. It provides a simple way to create a plugin that can be easily loaded into the game.
 
 ## Installation
-- Use the NuGet package manager to install the package
+- Use the NuGet package manager to install the [NuGet Package](https://www.nuget.org/packages/Paulov.Bepinex.Framework) into your project `dotnet add package Paulov.Bepinex.Framework`
 
 ## Usage
 - Ensure that Paulov.Bepinex.Framework.dll is in the game's BepinEx/plugins folder
@@ -46,3 +43,14 @@ To learn more about patching using Harmony, visit the [Harmony Wiki](https://har
 ## License
 
 Distributed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Public License. See [LICENSE](LICENSE.md) for more information.
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[nuget-shield]: https://img.shields.io/nuget/v/Paulov.Bepinex.Framework?style=for-the-badge
+
+[nuget-url]: https://www.nuget.org/packages/Paulov.Bepinex.Framework
+
+[contributors-shield]: https://img.shields.io/github/contributors/paulov-t/Paulov.Bepinex.Framework.svg?style=for-the-badge
+
+[contributors-url]: https://github.com/paulov-t/Paulov.Bepinex.Framework/graphs/contributors
+
